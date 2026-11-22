@@ -162,6 +162,11 @@ func arrange() error {
 	if err := rex.OpenSidebar(context.Background(), target, sidebar); err != nil {
 		return err
 	}
+	// Name the session after the project rather than leave Rex's random
+	// words. A failure here leaves the name as it was and nothing else.
+	if err := rex.SetSessionLabel(context.Background(), target, projectName(cwd)); err != nil {
+		fmt.Fprintln(os.Stderr, "rig: could not name the session:", err)
+	}
 	if cfg.Main.Command == "" {
 		return nil
 	}
@@ -229,6 +234,17 @@ func runMentions(args []string) error {
 		return err
 	}
 	return mentions.Run(mentions.Source{Session: *session, Block: *block, Dir: dir})
+}
+
+// projectName is the name of the repository dir is in, or of dir itself
+// outside one, so a tab opened in a subfolder is named after the project.
+func projectName(dir string) string {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if repo, err := git.Open(ctx, dir); err == nil {
+		dir = repo.Root
+	}
+	return filepath.Base(dir)
 }
 
 func dirArg(args []string) (string, error) {

@@ -123,6 +123,15 @@ if err then error(err, 0) end`, map[string]string{"label": label})
 	return err
 }
 
+// SetSessionLabel names the session t is in, as Rex's sidebar and tab
+// bar show it.
+func SetSessionLabel(ctx context.Context, t Target, label string) error {
+	_, err := Do(ctx, t, `local _, err = rex.call("session.set_label", { session_id = rex.session_id,
+  label = rex.args.label })
+if err then error(err, 0) end`, map[string]string{"label": label})
+	return err
+}
+
 // OpenPopup shows p in a floating layer over the tab t is in. If Rex cannot
 // float it, p opens in a new panel beside the tab's other panes instead.
 // It reports what it did: "float", "split" or "focus".

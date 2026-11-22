@@ -87,7 +87,7 @@ The first run writes the layout to `~/.rig/layout.json`. Edit it to change the s
 }
 ```
 
-`width` and `height` are percentages; `rows` is an exact height. Running `rig` again replaces the sidebar.
+`width` and `height` are percentages; `rows` is an exact height. Running `rig` again replaces the sidebar. It also names the Rex session after the project, the folder of the Git repository you're in, instead of Rex's random words.
 
 Each pane also runs on its own: `rig outline`, `rig history`, `rig usage`, `rig find`, and `rig view FILE`.
 
