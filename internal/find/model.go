@@ -366,7 +366,7 @@ func (m Model) results() []string {
 	q := strings.TrimSpace(m.query)
 	switch {
 	case m.err != nil && m.client == nil:
-		return []string{" " + ui.Error.Render(m.err.Error()), ui.Dim.Render(" Install it with: brew install dmtrKovalenko/fff/fff-mcp")}
+		return []string{" " + ui.Error.Render(m.err.Error()), ui.Dim.Render(" Run rig install to download it")}
 	case m.err != nil:
 		return []string{" " + ui.Error.Render(m.err.Error())}
 	case !m.started:

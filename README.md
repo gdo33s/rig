@@ -30,7 +30,7 @@ Then add rig's shortcuts to Rex:
 rig install
 ```
 
-This writes `~/.config/rig/rex.lua`, adds one line to Rex's `init.lua` to load it, and reloads Rex's config. `rig uninstall` removes both. Run `rig install` again after upgrading rig, so Rex picks up any new shortcuts.
+This writes `~/.config/rig/rex.lua`, adds one line to Rex's `init.lua` to load it, reloads Rex's config, and installs `fff-mcp` for file search if it's missing. `rig uninstall` removes both. Run `rig install` again after upgrading rig, so Rex picks up any new shortcuts.
 
 ### Claude Code usage
 
@@ -54,13 +54,7 @@ Use the full path, such as `~/go/bin/rig`, if Claude Code doesn't find `rig` on 
 
 ### File search
 
-Find uses [fff](https://github.com/dmtrKovalenko/fff)'s `fff-mcp` server. Install it and put it on your `PATH`:
-
-```sh
-brew install dmtrKovalenko/fff/fff-mcp
-```
-
-Everything else works without it.
+Find uses [fff](https://github.com/dmtrKovalenko/fff)'s `fff-mcp` server. `rig install` downloads it to `~/.local/bin` when it isn't already installed, and checks the download against the release's checksums before installing it. If you already have `fff-mcp` on your `PATH`, rig uses that one.
 
 ## Use
 

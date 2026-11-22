@@ -12,6 +12,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/gdo33s/rig/internal/fff"
 	"github.com/gdo33s/rig/internal/find"
 	"github.com/gdo33s/rig/internal/git"
 	"github.com/gdo33s/rig/internal/history"
@@ -40,7 +41,8 @@ Usage:
   rig view [--line N | --diff | --commit SHA] FILE
                        show a file, or its change, with syntax colours
   rig install          add rig to Rex: shift+cmd+f opens rig find in any
-                       pane, and shift+cmd+o the files it has mentioned
+                       pane, and shift+cmd+o the files it has mentioned;
+                       downloads fff-mcp for rig find if it is missing
   rig uninstall        remove rig from Rex
   rig statusline [--then CMD]
                        Claude Code status-line command: records rate limits
@@ -103,11 +105,22 @@ func run(args []string) error {
 			return err
 		}
 		p := install.DefaultPaths()
-		if err := install.Install(p, exe); err != nil {
-			return err
+		rexErr := install.Install(p, exe)
+		if rexErr == nil {
+			fmt.Printf("rig: added to Rex. shift+cmd+f opens rig find; shift+cmd+o lists the files a pane mentioned; shift+cmd+d switches a rig view between file and diff.\n  %s\n  loaded from %s\n", p.Lua, p.Init)
 		}
-		fmt.Printf("rig: added to Rex. shift+cmd+f opens rig find; shift+cmd+o lists the files a pane mentioned; shift+cmd+d switches a rig view between file and diff.\n  %s\n  loaded from %s\n", p.Lua, p.Init)
-		return nil
+		// Find needs fff-mcp, with or without Rex. Without it everything else
+		// still works, so a failed download is reported, not fatal.
+		path, fetched, err := fff.Ensure(context.Background())
+		switch {
+		case err != nil:
+			fmt.Fprintf(os.Stderr, "rig: could not install fff-mcp, which rig find needs: %v\n", err)
+		case fetched:
+			fmt.Printf("rig: installed fff-mcp %s for rig find\n  %s\n", fff.Version, path)
+		default:
+			fmt.Printf("rig: rig find uses the fff-mcp at %s\n", path)
+		}
+		return rexErr
 	case "uninstall":
 		p := install.DefaultPaths()
 		if err := install.Uninstall(p); err != nil {
